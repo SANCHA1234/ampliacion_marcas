@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script
+        
+type="text/javascript" src="form.js"></script>
+<script>cargarDatos()
+{
+  setValue("precio", getValue("precio"));
+  setValue("num_unidades", getValue("num_unidades"));
+  setValue("disco"  , parseInt( getValue ("disco")));
+  setValue("año_publicado", getValue("año_publicado"));
+  setValue("precio", getValue("precio"));
+  setValue("fecha_titulo"  , getValue("fecha_titulo"));
+  setValue("rango"  , getValue("rango"));
+  
+}
+</script>
+<body>
+    <center><body onload="cargarDatos()">
+        <br><div class="container h-100  form-container bg-secondary col-md-9 p-3 " style="color: rgb(0, 255, 72);"> 
+         <div  class="input-group  input-group-lg">
+                <label class="input-group-text">año publicado</label><br>
+                <input class="form-control" type="date" name ="año_publicado"readonly/>
+                <input type="submit" value="Continuar"/>
+            </div>
+        </div><br>
+           <div  class="input-group  input-group-lg">
+            <label class="input-group-text">Fecha título</label><br>
+            <input class="form-control" type="date" name ="biografia" readonly/>
+            <input type="submit" value="Continuar"/>
+        
+        </div>
+        <div class="container h-100"><form action="jacko_04.html" class="form-container">
+            <label class="input-group-text">rango</label>
+            <input class="form-control" type="range" name="rango">
+            <input type="button" min="0" max="200" value="Fin"/></a>
+        </div></form></center>
+       <img class="image" style="height: 200px;" src="imagenes/michae_cantando.jpg">
+       <img class="img2" style="height: 200px;" src="imagenes/michael_niño.jpg">
+
+       
+
+
+
+    </form></body>
+<style>
+    .image
+    {
+        position: absolute;
+
+        left: 300px;
+        top:400px;
+    }
+    .img2
+    {
+        position: absolute;
+       left: 700px;
+        top:400px;
+    }
+</style>
+</html>

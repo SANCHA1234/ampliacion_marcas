@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-minimal/minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script
+        
+     type="text/javascript" src="form.js"></script>
+  <script>cargarDatos()
+    {
+       setValue("precio2", getValue("precio"));
+       setValue("num_unidades", getValue("num_unidades"));
+       setValue("disco"  , parseInt( getValue ("disco")));
+       setValue("año_publicado", getValue("año_publicado"));
+       setValue("precio", getValue("precio"));
+       setValue("fecha_titulo"  , getValue("fecha_titulo"));
+       setValue("rango"  , getValue("rango"));
+       
+    }
+</script>
+</head>
+<body onload="cargarDatos()">
+
+    <table>
+        <tr>
+            <th> LP</th>
+            <th> BIOGRAFÍA</th>
+            
+        <tr>
+            <tr>
+                <th> <div  class="input-group  input-group-lg">
+                    <label class="input-group-text">Disco</label><br>
+                    <input class="form-control" type="text" name ="disco" readonly/></th>
+                <th><div  class="input-group  input-group-lg">
+                    <label class="input-group-text">año publicado</label><br>
+                    <input class="form-control" type="date" name ="año_publicado" readonly/></th>
+            </tr><br><br>
+            <tr>
+                <th><div  class="input-group  input-group-lg">
+                    <label class="input-group-text">NºUnidades</label><br>
+                    <input class="form-control" type="text" name ="num_unidades"/>
+                    
+                </th>
+                
+            <tr>
+                <tr>
+                    <th><div  class="input-group  input-group-lg">
+                        <label class="input-group-text">Precio</label><br>
+                        <input class="form-control" type="number" name ="precio2" readonly/>
+                    </th>
+
+                    <th></th>
+                   
+                <tr>
+            </tr>
+            <tr>
+                <th>
+
+                </th>
+                <th>
+                    <div  class="input-group  input-group-lg">
+                        <label class="input-group-text">Fecha título</label><br>
+                        <input class="form-control" type="date" name ="biografia" readonly/>
+                </th>
+                
+
+
+            </tr>
+            <tr>
+                <th>
+
+                </th>
+                <th>
+                    <div class="input-group input-group-lg">
+                        <label class="input-group-text">rango</label>
+                        <input class="form-control" type="range" name="rango" readonly>
+                        <input type="button" min="0" max="200" value="Fin"/>
+                </th>
+                
+
+
+            </tr>
+
+        </td>
+    </table>
+    <div class="container ">
+        
+        <img style="height: 100px;" src="imagenes/logo.png" alt="logo"><br>
+        <button class="boton2" onclick="mostrarAlerta()">Normas</button>
+
+</div></form>
+</body>
+<style>
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.container
+{
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+    width:fit-content;
+    padding: 70px;
+    position: absolute;
+
+    left: 600px;
+}
+
+</style>
+<script>
+    
+    function mostrarAlerta(){
+      Swal.fire({
+        title: "Vive!",
+        text: "La vida es bonita",
+        Image: "imagenes/michael_niño.jpg",
+        confirmButtonText: "ok",
+        
+      });
+    }
+
+  </script>
+</script>
+</html>
