@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juego con 3 Jugadores</title>
+  <style>
+    body {
+      background-color: blue;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    canvas {
+      background: grey;
+      border: 2px solid black;
+      display: block;
+      margin: 20px auto;
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    .player-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      border: 2px solid black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="1400" height="630"></canvas>
+<div class="button-container">
+  <div class="player-buttons">
+    <button id="avanza1">Avanza_jugador1</button>
+    <button id="para1">Para_jugador1</button>
+  </div>
+  <div class="player-buttons">
+    <button id="avanza2">Avanza_jugador2</button>
+    <button id="para2">Para_jugador2</button>
+  </div>
+  <div class="player-buttons">
+    <button id="avanza3">Avanza_jugador3</button>
+    <button id="para3">Para_jugador3</button>
+    <button id="inicio">Empezar turno</button>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const casillas = Array.from({length: 10}, (_, i) => ({
+  x: 200,
+  y: 580 - (i * 60),
+  w: 1000,
+  h: 30
+}));
+
+const jugadores = [
+  { id: 1, x: 250, y: 580, w: 50, h: 50, posicion: 0, accion: 'parado', corazon: false, color: 'red' },
+  { id: 2, x: 550, y: 580, w: 50, h: 50, posicion: 0, accion: 'parado', corazon: false, color: 'green' },
+  { id: 3, x: 1000, y: 580, w: 50, h: 50, posicion: 0, accion: 'parado', corazon: false, color: 'yellow' },
+];
+
+// Dados, cada dado tiene 6 caras (números) según la descripción
+const dados = {
+  negro1: [1,1,1,1,2,2],
+  negro2: [1,1,1,1,0,0],
+  negro3: [1,1,0,0,0,0],
+  rojo: [1,1,1,1,1,0]
+};
+
+let bolsa = [];
+let negrosAcumulados = []; // Array que almacena los dados negros que han salido (solo el nombre del dado)
+
+// Función para llenar la bolsa con los 4 dados
+function llenarBolsa() {
+  bolsa = ['negro1', 'negro2', 'negro3', 'rojo'];
+  negrosAcumulados = [];
+}
+llenarBolsa();
+
+// Eventos para botones de cada jugador para elegir andar o parar
+jugadores.forEach(j => {
+  document.getElementById('avanza'+j.id).addEventListener('click', () => {
+    j.accion = 'andar';
+    console.log(`Jugador ${j.id} ahora anda`);
+  });
+  document.getElementById('para'+j.id).addEventListener('click', () => {
+    j.accion = 'parado';
+    console.log(`Jugador ${j.id} ahora para`);
+  });
+});
+
+// Función que lanza un dado (elige aleatoriamente una cara del dado)
+function tirarDado(nombreDado) {
+  const caras = dados[nombreDado];
+  const indice = Math.floor(Math.random() * caras.length);
+  return caras[indice];
+}
+
+// Función para sacar un dado al azar de la bolsa y quitarlo de la bolsa
+function sacarDadoDeBolsa() {
+  const indice = Math.floor(Math.random() * bolsa.length);
+  const dado = bolsa.splice(indice, 1)[0];
+  return dado;
+}
+
+function calcularTotalDadosNegros() {
+  // Suma los valores de tirar cada dado negro acumulado
+  let total = 0;
+  negrosAcumulados.forEach(dadoNegro => {
+    total += tirarDado(dadoNegro);
+  });
+  return total;
+}
+
+// Botón "Empezar turno" para ejecutar la mecánica del turno cuando los 3 jugadores hayan elegido andar/parar
+document.getElementById('inicio').addEventListener('click', () => {
+  // Comprobar que todos hayan elegido acción (no estén en indefinido o vacio)
+  if (!jugadores.every(j => j.accion === 'andar' || j.accion === 'parado')) {
+    alert('Todos los jugadores deben elegir andar o parar antes de empezar el turno');
+    return;
+  }
+
+  // Sacar un dado al azar de la bolsa para el turno
+  const dadoSacado = sacarDadoDeBolsa();
+  console.log('Dado sacado:', dadoSacado);
+
+  // Si el dado es negro, se acumula (añadir a negrosAcumulados)
+  if (dadoSacado !== 'rojo') {
+    negrosAcumulados.push(dadoSacado);
+  }
+
+  // Aplicar reglas a cada jugador según su estado y dado sacado
+  jugadores.forEach(j => {
+    if (j.accion === 'parado') {
+      if (dadoSacado === 'rojo' && !j.corazon) {
+        j.corazon = true;
+        console.log(`Jugador ${j.id} recibe corazón`);
+      }
+      // Si dado negro y parado no pasa nada
+    } else { // jugador andando
+      if (dadoSacado !== 'rojo') {
+        // Dado negro: tirar todos los dados negros acumulados y avanzar
+        const totalAvanza = calcularTotalDadosNegros();
+        j.posicion = Math.min(9, j.posicion + totalAvanza);
+        console.log(`Jugador ${j.id} avanza ${totalAvanza} casillas`);
+      } else { // dado rojo
+        if (j.corazon) {
+          j.corazon = false; // pierde corazón y no pasa nada más
+          console.log(`Jugador ${j.id} pierde corazón y no baja`);
+        } else {
+          // Tirar todos los dados negros acumulados + este dado rojo (como dado negro) y retroceder
+          // Agregar dado rojo a negros acumulados temporalmente para esta tirada
+          const dadosTemp = negrosAcumulados.concat(['rojo']);
+          let totalResta = 0;
+          dadosTemp.forEach(dado => totalResta += tirarDado(dado));
+          j.posicion = Math.max(0, j.posicion - totalResta);
+          console.log(`Jugador ${j.id} retrocede ${totalResta} casillas`);
+        }
+      }
+    }
+  });
+
+  // Si se han sacado los 3 dados negros o el dado rojo, reponer la bolsa
+  const negrosUnicos = new Set(negrosAcumulados);
+  if (negrosUnicos.size === 3 || dadoSacado === 'rojo') {
+    llenarBolsa();
+    console.log('Se repone la bolsa');
+  }
+
+  // Actualizar posiciones Y para dibujar
+  jugadores.forEach(j => {
+    j.y = 580 - (j.posicion * 60);
+  });
+
+  // Comprobar si hay ganadores (posicion >= 9)
+  const ganadores = jugadores.filter(j => j.posicion >= 9);
+  if (ganadores.length > 0) {
+    alert('¡Ganador(es)! Jugador(es): ' + ganadores.map(g => g.id).join(', '));
+    // Reiniciar juego para que empiece de nuevo
+    jugadores.forEach(j => {
+      j.posicion = 0;
+      j.corazon = false;
+      j.accion = 'parado';
+      j.y = 580;
+    });
+    llenarBolsa();
+  }
+});
+
+// Función para dibujar corazón encima del jugador
+function dibujarCorazon(x, y) {
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(x + 5, y + 15);
+  ctx.bezierCurveTo(x + 5, y, x, y, x, y + 7);
+  ctx.bezierCurveTo(x, y + 15, x + 10, y + 22, x + 15, y + 25);
+  ctx.bezierCurveTo(x + 20, y + 22, x + 30, y + 15, x + 30, y + 7);
+  ctx.bezierCurveTo(x + 30, y, x + 25, y, x + 15, y + 15);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Función para dibujar jugadores (rectángulos simples con color) y camino
+function dibujar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Dibujar camino (casillas)
+  ctx.fillStyle = 'blue';
+  casillas.forEach(c => ctx.fillRect(c.x, c.y, c.w, c.h));
+
+  // Dibujar jugadores como rectángulos con su color
+  jugadores.forEach(j => {
+    ctx.fillStyle = j.color;
+    ctx.fillRect(j.x, j.y, j.w, j.h);
+
+    if (j.corazon) {
+      dibujarCorazon(j.x + j.w + 5, j.y);
+    }
+  });
+
+  requestAnimationFrame(dibujar);
+}
+dibujar();
+</script>
+</body>
+</html>
+
