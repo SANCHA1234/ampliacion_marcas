@@ -69,7 +69,7 @@ const jugadores = [
   { id: 3, x: 1000, y: 580, w: 50, h: 50, posicion: 0, accion: 'parado', corazon: false, color: 'yellow' },
 ];
 
-// Dados, cada dado tiene 6 caras (números) según la descripción
+// Dadosn
 const dados = {
   negro1: [1,1,1,1,2,2],
   negro2: [1,1,1,1,0,0],
@@ -78,7 +78,7 @@ const dados = {
 };
 
 let bolsa = [];
-let negrosAcumulados = []; // Array que almacena los dados negros que han salido (solo el nombre del dado)
+let negrosAcumulados = []; // Array que almacena los dados negros
 
 // Función para llenar la bolsa con los 4 dados
 function llenarBolsa() {
@@ -87,7 +87,7 @@ function llenarBolsa() {
 }
 llenarBolsa();
 
-// Eventos para botones de cada jugador para elegir andar o parar
+// botones
 jugadores.forEach(j => {
   document.getElementById('avanza'+j.id).addEventListener('click', () => {
     j.accion = 'andar';
@@ -99,14 +99,14 @@ jugadores.forEach(j => {
   });
 });
 
-// Función que lanza un dado (elige aleatoriamente una cara del dado)
+// lanza dado 
 function tirarDado(nombreDado) {
   const caras = dados[nombreDado];
   const indice = Math.floor(Math.random() * caras.length);
   return caras[indice];
 }
 
-// Función para sacar un dado al azar de la bolsa y quitarlo de la bolsa
+// 
 function sacarDadoDeBolsa() {
   const indice = Math.floor(Math.random() * bolsa.length);
   const dado = bolsa.splice(indice, 1)[0];
@@ -122,7 +122,7 @@ function calcularTotalDadosNegros() {
   return total;
 }
 
-// Botón "Empezar turno" para ejecutar la mecánica del turno cuando los 3 jugadores hayan elegido andar/parar
+// Botón "Empezar turno"
 document.getElementById('inicio').addEventListener('click', () => {
   // Comprobar que todos hayan elegido acción (no estén en indefinido o vacio)
   if (!jugadores.every(j => j.accion === 'andar' || j.accion === 'parado')) {
@@ -130,7 +130,7 @@ document.getElementById('inicio').addEventListener('click', () => {
     return;
   }
 
-  // Sacar un dado al azar de la bolsa para el turno
+  // Sacar un dado al azar
   const dadoSacado = sacarDadoDeBolsa();
   console.log('Dado sacado:', dadoSacado);
 
@@ -139,17 +139,17 @@ document.getElementById('inicio').addEventListener('click', () => {
     negrosAcumulados.push(dadoSacado);
   }
 
-  // Aplicar reglas a cada jugador según su estado y dado sacado
+  
   jugadores.forEach(j => {
     if (j.accion === 'parado') {
       if (dadoSacado === 'rojo' && !j.corazon) {
         j.corazon = true;
         console.log(`Jugador ${j.id} recibe corazón`);
       }
-      // Si dado negro y parado no pasa nada
+      // 
     } else { // jugador andando
       if (dadoSacado !== 'rojo') {
-        // Dado negro: tirar todos los dados negros acumulados y avanzar
+        
         const totalAvanza = calcularTotalDadosNegros();
         j.posicion = Math.min(9, j.posicion + totalAvanza);
         console.log(`Jugador ${j.id} avanza ${totalAvanza} casillas`);
@@ -158,8 +158,7 @@ document.getElementById('inicio').addEventListener('click', () => {
           j.corazon = false; // pierde corazón y no pasa nada más
           console.log(`Jugador ${j.id} pierde corazón y no baja`);
         } else {
-          // Tirar todos los dados negros acumulados + este dado rojo (como dado negro) y retroceder
-          // Agregar dado rojo a negros acumulados temporalmente para esta tirada
+          
           const dadosTemp = negrosAcumulados.concat(['rojo']);
           let totalResta = 0;
           dadosTemp.forEach(dado => totalResta += tirarDado(dado));
@@ -170,19 +169,19 @@ document.getElementById('inicio').addEventListener('click', () => {
     }
   });
 
-  // Si se han sacado los 3 dados negros o el dado rojo, reponer la bolsa
+  
   const negrosUnicos = new Set(negrosAcumulados);
   if (negrosUnicos.size === 3 || dadoSacado === 'rojo') {
     llenarBolsa();
     console.log('Se repone la bolsa');
   }
 
-  // Actualizar posiciones Y para dibujar
+  
   jugadores.forEach(j => {
     j.y = 580 - (j.posicion * 60);
   });
 
-  // Comprobar si hay ganadores (posicion >= 9)
+  
   const ganadores = jugadores.filter(j => j.posicion >= 9);
   if (ganadores.length > 0) {
     alert('¡Ganador(es)! Jugador(es): ' + ganadores.map(g => g.id).join(', '));
@@ -197,7 +196,7 @@ document.getElementById('inicio').addEventListener('click', () => {
   }
 });
 
-// Función para dibujar corazón encima del jugador
+
 function dibujarCorazon(x, y) {
   ctx.fillStyle = "red";
   ctx.beginPath();
@@ -210,15 +209,15 @@ function dibujarCorazon(x, y) {
   ctx.fill();
 }
 
-// Función para dibujar jugadores (rectángulos simples con color) y camino
+
 function dibujar() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Dibujar camino (casillas)
+ 
   ctx.fillStyle = 'blue';
   casillas.forEach(c => ctx.fillRect(c.x, c.y, c.w, c.h));
 
-  // Dibujar jugadores como rectángulos con su color
+  
   jugadores.forEach(j => {
     ctx.fillStyle = j.color;
     ctx.fillRect(j.x, j.y, j.w, j.h);
